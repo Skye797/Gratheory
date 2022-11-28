@@ -1,4 +1,4 @@
-PyGraph - A mathematical graphing module for python
+Graphly - A mathematical graphing module for python
 
 Create a graph - 
 
