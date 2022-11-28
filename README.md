@@ -2,7 +2,7 @@ Graphly - A mathematical graphing module for python
 
 Create a graph - 
 
-from PyGraph import graph
+from Graphly import graph
 
 g = graph(l, oneWayEdges = k)
 
