@@ -126,3 +126,27 @@ class graph:
                         path.append(i[0])
                         currentNode = i[0]
             return [self.numbersToNames[i] for i in path[::-1]], tentDist[end]
+    
+    def DFS(self, Vertex):
+        stack = [self.namesToNumbers[Vertex]]
+        visited = []
+        while stack != []:
+            nextNode = stack.pop()
+            if nextNode not in visited:
+                visited.append(nextNode)
+                for i in self.vertices[nextNode].connectTo:
+                    stack.append(i[0])
+                    
+        return [self.numbersToNames[i] for i in visited]
+                
+    def BFS(self, Vertex):
+        queue = [self.namesToNumbers[Vertex]]
+        visited = []
+        while queue != []:
+            nextNode = queue.pop(0)
+            if nextNode not in visited:
+                visited.append(nextNode)
+                for i in self.vertices[nextNode].connectTo:
+                    queue.append(i[0])
+        
+        return [self.numbersToNames[i] for i in visited]
