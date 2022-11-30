@@ -10,4 +10,4 @@ where l is a list of edges in the format of [A, B, C] is an edge from A to B wit
 
 To find the shortest path, use g.findShortestPath(start, end, searchType = A) where start is the start vertex, end is the end vertex and searchType is either 'Ford' or 'Djikstra' deciding which algorithm to implement, the default being 'Ford'.
 
-Depth first search and Breadth first search will soon be implemented as DFS and BFS.
+Depth first search and Breadth first search will return a list of reachable vertices from a given vertex. Callable with method, DFS and BFS.
