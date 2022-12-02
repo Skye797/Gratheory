@@ -35,32 +35,21 @@ class vertex:
         self.number = n
     
 class graph:
-    def __init__(self,n,edges,oneWayEdges=True):
+    def __init__(self,edges,oneWayEdges=True):
         self.vertices = []
-        self.length = n
+        self.length = 0
         self.oneWay = oneWayEdges
         self.edges = edges
         self.namesToNumbers = {}
         self.numbersToNames = {}
-        for i in range(n):
-            self.vertices.append(vertex(i,self.oneWay))
-            
-        vertexAdded = 0
+        
         for i in edges:
             if i[0] not in self.namesToNumbers.keys():
-                self.namesToNumbers[i[0]] = vertexAdded
-                self.numbersToNames[vertexAdded] = i[0]
-                vertexAdded += 1
+                self.addVertex(i[0])
             if i[1] not in self.namesToNumbers.keys():
-                self.namesToNumbers[i[1]] = vertexAdded
-                self.numbersToNames[vertexAdded] = i[1]
-                vertexAdded += 1
+                self.addVertex(i[1])
             
-            self.vertices[self.namesToNumbers[i[0]]].connectTo.append([self.namesToNumbers[i[1]],i[2]])
-            self.vertices[self.namesToNumbers[i[1]]].connectFrom.append([self.namesToNumbers[i[0]],i[2]])
-            if not self.oneWay:
-                self.vertices[self.namesToNumbers[i[1]]].connectTo.append([self.namesToNumbers[i[0]],i[2]])
-                self.vertices[self.namesToNumbers[i[0]]].connectFrom.append([self.namesToNumbers[i[1]],i[2]])
+            self.addEdge(i)
             
     def findShortestPath(self,start,end,searchType = 'Ford'):
         if searchType == 'Ford':
@@ -150,3 +139,33 @@ class graph:
                     queue.append(i[0])
         
         return [self.numbersToNames[i] for i in visited]
+    
+    def addVertex(self, v, raiseError = True):
+        if v in self.namesToNumbers.keys():
+            if raiseError:
+                raise Exception("Vertex already exists")
+            return self.namesToNumbers[v]
+        else:
+            self.vertices.append(Vertex(self.length))
+            self.namesToNumbers[v] = self.length
+            self.numbersToNames[self.length] = v
+            self.length += 1
+            return (self.length-1)
+    
+    def addEdge(self, e, oneWay=True , raiseError = True):
+        if e[0] not in self.namesToNumbers.keys():
+            if raiseError:
+                raise Exception("First node not in graph")
+            self.addVertex(e[0])
+        if e[1] not in self.namesToNumbers.keys():
+            if raiseError:
+                raise Exception("Second node not in graph")
+            self.addVertex(e[1])
+        if oneWay and not self.oneWay:
+            oneWay = self.oneWay 
+        
+        self.vertices[self.namesToNumbers[e[0]]].connectTo.append([self.namesToNumbers[e[1]], e[2]])
+        self.vertices[self.namesToNumbers[e[1]]].connectFrom.append([self.namesToNumbers[e[0]], e[2]])
+        if not oneWay:
+            self.vertices[self.namesToNumbers[e[1]]].connectTo.append([self.namesToNumbers[e[0]], e[2]])
+            self.vertices[self.namesToNumbers[e[0]]].connectFrom.append([self.namesToNumbers[e[1]], e[2]])
