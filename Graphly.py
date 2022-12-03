@@ -26,6 +26,11 @@ class inf:
     def __sub__(self, o):
         return self
     
+    def __rsub__(self, o):
+        return self
+    
+    def __radd__(self,o):
+        return self
         
 
 class vertex:
