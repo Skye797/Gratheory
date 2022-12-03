@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "Graphly"
+version = "0.0.1"
+authors = [
+  { name="Samuel Taylor", email="sam.w.taylor@hotmail.co.uk" },
+]
+description = "Create and use graphs theory for maths"
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Apache-2.0",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/Samuelt797/Graphly"
+"Bug Tracker" = "https://github.com/Samuelt797/Graphly/issues"
