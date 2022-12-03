@@ -33,13 +33,13 @@ class inf:
         return self
         
 
-class vertex:
+class Vertex:
     def __init__(self,n,oneWay):
         self.connectTo = []
         self.connectFrom = []
         self.number = n
     
-class graph:
+class Graph:
     def __init__(self,edges,oneWayEdges=True):
         self.vertices = []
         self.length = 0
