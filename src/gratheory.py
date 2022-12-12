@@ -127,19 +127,23 @@ class Graph:
                         currentNode = i[0]
             return [self.numbersToNames[i] for i in path[::-1]], visited[end]
     
-    def DFS(self, vertex):
+    def DFS(self, vertex, reverseEdges=False):
         stack = [self.namesToNumbers[vertex]]
         visited = []
         while stack != []:
             nextNode = stack.pop()
             if nextNode not in visited:
                 visited.append(nextNode)
-                for i in self.vertices[nextNode].connectTo:
+                if reverseEdges:
+                    connects = self.vertices[nextNode].connectFrom
+                else:
+                    connects = self.vertices[nextNode].connectTo
+                for i in connects:
                     stack.append(i[0])
                     
         return [self.numbersToNames[i] for i in visited]
                 
-    def BFS(self, vertex):
+    def BFS(self, vertex, reverseEdges=False):
         queue = Queue()
         queue.put(self.namesToNumbers[vertex])
         visited = []
@@ -147,7 +151,11 @@ class Graph:
             nextNode = queue.get()
             if nextNode not in visited:
                 visited.append(nextNode)
-                for i in self.vertices[nextNode].connectTo:
+                if reverseEdges:
+                    connects = self.vertices[nextNode].connectFrom
+                else:
+                    connects = self.vertices[nextNode].connectTo
+                for i in connects:
                     queue.put(i[0])
         
         return [self.numbersToNames[i] for i in visited]
