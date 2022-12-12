@@ -8,6 +8,9 @@
 
 #find shortest path finds the shortest path between two vertices (passed through as parameters) and returns a list 
 #of vertices which are the shortest path followed by its weight in a tuple 
+from queue import Queue, PriorityQueue
+from collections import defaultdict
+
 
 class inf:
     
@@ -34,7 +37,7 @@ class inf:
         
 
 class Vertex:
-    def __init__(self,n,oneWay):
+    def __init__(self,n):
         self.connectTo = []
         self.connectFrom = []
         self.number = n
@@ -56,7 +59,18 @@ class Graph:
             
             self.addEdge(i)
             
-    def findShortestPath(self,start,end,searchType = 'Ford'):
+    def findShortestPath(self,start,end,searchType = 'Ford', raiseError=False):
+        if not (start in self.namesToNumbers.keys() and end in self.namesToNumbers.keys()):
+            if raiseError:
+                raise Exception("Start or end not in graph")
+            else:
+                return None, None
+        if end not in self.BFS(start):
+            if raiseError:
+                raise Exception('Path does not exist')
+            else:
+                return None, None
+        
         if searchType == 'Ford':
             if not (start in self.namesToNumbers.keys() and end in self.namesToNumbers.keys()):
                 raise Exception("Start or end not in graph")
@@ -69,9 +83,10 @@ class Graph:
                 changes = 0
                 for i in range(self.length):
                     for j in self.vertices[i].connectFrom:
-                        if vertices[i][1] > (vertices[j[0]][1]+j[1]):
+                        if vertices[i][1] > (vertices[j[0]][1]+j[1]) and not isinstance(vertices[j[0]][1], inf):
                             vertices[i][1] = (vertices[j[0]][1]+j[1])
                             changes += 1
+
             currentPoint = end
             path = [end]
             count = 0
@@ -82,47 +97,38 @@ class Graph:
                         currentPoint = i[0]
                         break
                 count += 1
-            if count == (self.length+1):
-                raise Exception("Path does not exist")
+
             else:
                 path = [self.numbersToNames[i] for i in path[::-1]]
                 return path, vertices[end][1]
             
             
         if searchType == 'Djikstra':
-            if not (start in self.namesToNumbers.keys() and end in self.namesToNumbers.keys()):
-                raise Exception("Start or end not in graph")
             start = self.namesToNumbers[start]
             end = self.namesToNumbers[end]
-            unvisited = [i for i in range(self.length)]
-            tentDist = {i:inf() for i in range(self.length)}
-            tentDist[start] = 0
+            
+            queue = PriorityQueue()
+            queue.put((0, start))
+            visited = defaultdict(lambda :inf())
             currentNode = start
-            while currentNode != end:
-                neighbours = sorted(self.vertices[currentNode].connectTo, key = lambda x:x[1])
-                unvisited.remove(currentNode)
+            while not queue.empty() and currentNode != end:
+                dist, currentNode = queue.get()
+                neighbours = self.vertices[currentNode].connectTo
+                visited[currentNode] = dist
                 for i in neighbours:
-                    if tentDist[i[0]] > tentDist[currentNode]+i[1]:
-                        tentDist[i[0]] = tentDist[currentNode]+i[1]
-                nextNode = unvisited[0]
-                for i in unvisited:
-                    if tentDist[i] < tentDist[nextNode]:
-                        nextNode = i
-                if nextNode == currentNode:
-                    raise Exception("Path does not exist")
-                
-                currentNode = nextNode
-                
+                    if i[0] not in visited.keys():
+                        queue.put((dist+i[1], i[0]))
+                        visited[i[0]] = dist+i[1]
             path = [end]
             while currentNode != start:
                 for i in self.vertices[currentNode].connectFrom:
-                    if i[1] == tentDist[currentNode] - tentDist[i[0]]:
+                    if i[1] == visited[currentNode] - visited[i[0]]:
                         path.append(i[0])
                         currentNode = i[0]
-            return [self.numbersToNames[i] for i in path[::-1]], tentDist[end]
+            return [self.numbersToNames[i] for i in path[::-1]], visited[end]
     
-    def DFS(self, Vertex):
-        stack = [self.namesToNumbers[Vertex]]
+    def DFS(self, vertex):
+        stack = [self.namesToNumbers[vertex]]
         visited = []
         while stack != []:
             nextNode = stack.pop()
@@ -133,15 +139,16 @@ class Graph:
                     
         return [self.numbersToNames[i] for i in visited]
                 
-    def BFS(self, Vertex):
-        queue = [self.namesToNumbers[Vertex]]
+    def BFS(self, vertex):
+        queue = Queue()
+        queue.put(self.namesToNumbers[vertex])
         visited = []
-        while queue != []:
-            nextNode = queue.pop(0)
+        while not queue.empty():
+            nextNode = queue.get()
             if nextNode not in visited:
                 visited.append(nextNode)
                 for i in self.vertices[nextNode].connectTo:
-                    queue.append(i[0])
+                    queue.put(i[0])
         
         return [self.numbersToNames[i] for i in visited]
     
