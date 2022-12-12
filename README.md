@@ -1,8 +1,8 @@
-Graphly - A mathematical graphing module for python
+Gratheory - A mathematical graphing module for python
 
 Create a graph - 
 
-from Graphly import graph
+from gratheory import Graph
 
 g = graph(l, oneWayEdges = k)
 
